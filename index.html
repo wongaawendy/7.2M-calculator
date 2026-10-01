@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>7.2M計算機</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, "Microsoft JhengHei", sans-serif;
+            background: #f5f6f8;
+            margin: 0;
+            padding: 30px 15px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        /* =========================
+           Tab
+           ========================= */
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 10px;
+            border: none;
+            background: #eee;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-button:hover {
+            background: #ddd;
+        }
+
+        .tab-button.active {
+            background: #4a6cf7;
+            color: white;
+        }
+
+        /* =========================
+           基本輸入
+           ========================= */
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-left: 4px solid #4a6cf7;
+            padding-left: 8px;
+        }
+
+        .score-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        /* =========================
+           庫存
+           ========================= */
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .inventory-item {
+            display: grid;
+            grid-template-columns: 1fr 100px;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 6px;
+        }
+
+        .item-name {
+            font-weight: bold;
+        }
+
+        .item-rule {
+            font-size: 13px;
+            color: #777;
+            margin-top: 3px;
+        }
+
+        /* =========================
+           按鈕
+           ========================= */
+
+        .calculate-button {
+            width: 100%;
+            padding: 14px;
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .calculate-button:hover {
+            background: #3858d8;
+        }
+
+        /* =========================
+           結果
+           ========================= */
+
+        .result {
+            margin-top: 25px;
+        }
+
+        .solution {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: #fafafa;
+        }
+
+        .solution-title {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .solution-item {
+            padding: 3px 0;
+        }
+
+        .solution-summary {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .hint {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 650px) {
+            .score-area,
+            .inventory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>7.2M計算機</h1>
+
+    <!-- =========================
+         D1～D5 Tab
+         ========================= -->
+
+    <div class="tabs">
+        <button class="tab-button active" onclick="switchTab('D1')">D1</button>
+        <button class="tab-button" onclick="switchTab('D2')">D2</button>
+        <button class="tab-button" onclick="switchTab('D3')">D3</button>
+        <button class="tab-button" onclick="switchTab('D4')">D4</button>
+        <button class="tab-button" onclick="switchTab('D5')">D5</button>
+    </div>
+
+
+    <!-- =========================
+         分數
+         ========================= -->
+
+    <div class="section">
+
+        <div class="section-title">
+            分數設定
+        </div>
+
+        <div class="score-area">
+
+            <div>
+                <label for="currentScore">
+                    目前分數
+                </label>
+
+                <input
+                    id="currentScore"
+                    type="number"
+                    min="0"
+                    value="0"
+                >
+            </div>
+
+            <div>
+                <label for="targetScore">
+                    目標分數
+                </label>
+
+                <input
+                    id="targetScore"
+                    type="number"
+                    min="0"
+                    value="7200000"
+                >
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         庫存
+         ========================= -->
+
+    <div class="section">
+
+        <div class="section-title">
+            <span id="inventoryTitle">D1</span> 庫存
+        </div>
+
+        <div
+            id="inventoryGrid"
+            class="inventory-grid">
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         計算
+         ========================= -->
+
+    <button
+        class="calculate-button"
+        onclick="calculate()">
+
+        開始計算
+
+    </button>
+
+
+    <!-- =========================
+         結果
+         ========================= -->
+
+    <div
+        id="result"
+        class="result">
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   ★★★ 這裡是最重要的地方 ★★★
+
+   以後如果你要修改：
+
+   1. 道具名稱
+   2. 道具分數
+   3. 一次至少使用幾個
+   4. 提醒／備註
+
+   主要修改這裡就可以。
+
+   unit = 一次使用的最小單位
+
+   例如：
+   體力 375 分，5個為單位
+   → score: 375
+   → unit: 5
+
+   UR碎片 25000 分，10個為單位
+   → score: 25000
+   → unit: 10
+   ========================================================= */
+
+
+const formulas = {
+
+    /* =========================
+       D1
+       ========================= */
+
+    D1: {
+
+        items: [
+
+            {
+                name: "體力",
+                score: 375,
+                unit: 5,
+                note: ""
+            },
+
+            {
+                name: "Lv1晶片箱子",
+                score: 2813,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "雷達",
+                score: 30000,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "UR碎片",
+                score: 25000,
+                unit: 10,
+                note: ""
+            },
+
+            {
+                name: "SSR碎片",
+                score: 8750,
+                unit: 10,
+                note: ""
+            },
+
+            {
+                name: "SR碎片",
+                score: 2500,
+                unit: 10,
+                note: ""
+            }
+
+        ]
+
+    },
+
+
+    /* =========================
+       D2
+       ========================= */
+
+    D2: {
+
+        items: [
+
+            {
+                name: "UR火車",
+                score: 300000,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "UR秘密任務",
+                score: 225000,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "招募",
+                score: 4500,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "1min加速",
+                score: 150,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "5min加速",
+                score: 750,
+                unit: 1,
+                note: ""
+            }
+
+        ]
+
+    },
+
+
+    /* =========================
+       D3
+       ========================= */
+
+    D3: {
+
+        items: [
+
+            {
+                name: "Lv1無人機組件",
+                score: 2750,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "1min加速",
+                score: 150,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "雷達",
+                score: 30000,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "5min加速",
+                score: 750,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "Lv2無人機組件",
+                score: 8250,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "Lv3無人機組件",
+                score: 25000,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "Lv4無人機組件",
+                score: 75000,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "Lv5無人機組件",
+                score: 225000,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "榮譽勳章",
+                score: 750,
+                unit: 1,
+                note: ""
+            }
+
+        ]
+
+    },
+
+
+    /* =========================
+       D4
+       ========================= */
+
+    D4: {
+
+        items: [
+
+            {
+                name: "UR英雄碎片",
+                score: 25000,
+                unit: 10,
+                note: ""
+            },
+
+            {
+                name: "SSR英雄碎片",
+                score: 8750,
+                unit: 10,
+                note: ""
+            },
+
+            {
+                name: "英雄招募",
+                score: 4500,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "專武碎片",
+                score: 25000,
+                unit: 10,
+                note: ""
+            },
+
+            {
+                name: "覺醒碎片",
+                score: 25000,
+                unit: 50,
+                note: ""
+            }
+
+        ]
+
+    },
+
+
+    /* =========================
+       D5
+       ========================= */
+
+    D5: {
+
+        items: [
+
+            {
+                name: "雷達",
+                score: 30000,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "1min加速",
+                score: 150,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "5min加速",
+                score: 750,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練11等兵",
+                score: 360,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練10等兵",
+                score: 330,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練9等兵",
+                score: 300,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練8等兵",
+                score: 270,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練7等兵",
+                score: 240,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練6等兵",
+                score: 210,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練5等兵",
+                score: 180,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練4等兵",
+                score: 150,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練3等兵",
+                score: 120,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練2等兵",
+                score: 90,
+                unit: 1,
+                note: ""
+            },
+
+            {
+                name: "訓練1等兵",
+                score: 60,
+                unit: 1,
+                note: ""
+            }
+
+        ]
+
+    }
+
+};
+
+
+/* =========================================================
+   目前使用哪一個 Tab
+   ========================================================= */
+
+let currentTab = "D1";
+
+
+/* =========================================================
+   切換 Tab
+   ========================================================= */
+
+function switchTab(tabName) {
+
+    currentTab = tabName;
+
+    /*
+       找到所有 Tab 按鈕
+    */
+
+    const buttons = document.querySelectorAll(".tab-button");
+
+    buttons.forEach(button => {
+
+        button.classList.remove("active");
+
+    });
+
+
+    /*
+       找到被點擊的 Tab
+    */
+
+    buttons.forEach(button => {
+
+        if (button.textContent === tabName) {
+
+            button.classList.add("active");
+
+        }
+
+    });
+
+
+    /*
+       更新庫存欄位
+    */
+
+    renderInventory();
+
+
+    /*
+       清除舊結果
+    */
+
+    document.getElementById("result").innerHTML = "";
+
+}
+
+
+/* =========================================================
+   顯示庫存欄位
+   ========================================================= */
+
+function renderInventory() {
+
+    const formula = formulas[currentTab];
+
+    const grid = document.getElementById("inventoryGrid");
+
+    const title = document.getElementById("inventoryTitle");
+
+    title.textContent = currentTab;
+
+    grid.innerHTML = "";
+
+
+    formula.items.forEach((item, index) => {
+
+        const div = document.createElement("div");
+
+        div.className = "inventory-item";
+
+
+        let ruleText = "";
+
+        if (item.unit > 1) {
+
+            ruleText =
+                `${item.unit}個為一組`;
+
+        } else {
+
+            ruleText =
+                "可單個使用";
+
+        }
+
+
+        if (item.note) {
+
+            ruleText += `｜${item.note}`;
+
+        }
+
+
+        div.innerHTML = `
+
+            <div>
+
+                <div class="item-name">
+                    ${item.name}
+                </div>
+
+                <div class="item-rule">
+                    ${item.score.toLocaleString()} 分／個
+                    ｜${ruleText}
+                </div>
+
+            </div>
+
+            <input
+                type="number"
+                min="0"
+                value="0"
+                id="stock-${index}"
+            >
+
+        `;
+
+
+        grid.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================================================
+   計算
+   ========================================================= */
+
+function calculate() {
+
+    const formula = formulas[currentTab];
+
+
+    const currentScore =
+        Number(
+            document.getElementById("currentScore").value
+        );
+
+
+    const targetScore =
+        Number(
+            document.getElementById("targetScore").value
+        );
+
+
+    /*
+       需要增加多少分
+    */
+
+    const need =
+        targetScore - currentScore;
+
+
+    const result =
+        document.getElementById("result");
+
+
+    /*
+       已經達標
+    */
+
+    if (need === 0) {
+
+        result.innerHTML = `
+            <div class="success">
+                目前已經達到目標分數。
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+       已經超過目標
+    */
+
+    if (need < 0) {
+
+        result.innerHTML = `
+            <div class="error">
+                目前分數已經超過目標分數。
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+       讀取庫存
+    */
+
+    const stocks = formula.items.map(
+        (item, index) => {
+
+            return Number(
+                document.getElementById(
+                    `stock-${index}`
+                ).value
+            ) || 0;
+
+        }
+    );
+
+
+    /*
+       將每個物品轉成「使用單位」。
+
+       例如：
+
+       UR碎片：
+       unit = 10
+
+       庫存 37
+
+       實際可以使用：
+       0、10、20、30
+    */
+
+    const maxUnits = formula.items.map(
+        (item, index) => {
+
+            return Math.floor(
+                stocks[index] / item.unit
+            );
+
+        }
+    );
+
+
+    /*
+       先找最少使用數量的解
+    */
+
+    const best =
+        findBestSolution(
+            formula.items,
+            maxUnits,
+            need
+        );
+
+
+    if (!best) {
+
+        result.innerHTML = `
+            <div class="error">
+                找不到符合庫存限制、且剛好達標的組合。
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+       找最多 3 個解。
+
+       這裡不是要求三個解一定使用
+       完全相同數量的道具。
+
+       只要是有效解，就可以列出。
+    */
+
+    const solutions =
+        findSolutions(
+            formula.items,
+            maxUnits,
+            need,
+            best.cost,
+            3
+        );
+
+
+    displaySolutions(
+        solutions,
+        formula.items,
+        need,
+        currentScore
+    );
+
+}
+
+
+/* =========================================================
+   找最少物品數量的解
+
+   這裡使用動態規劃。
+
+   cost = 實際使用的物品數量
+   ========================================================= */
+
+function findBestSolution(
+    items,
+    maxUnits,
+    target
+) {
+
+    /*
+       如果目標太大，
+       避免瀏覽器一次建立超大的陣列。
+
+       這個版本主要給一般遊戲分數使用。
+    */
+
+    if (target > 10000000) {
+
+        return findBestBySearch(
+            items,
+            maxUnits,
+            target
+        );
+
+    }
+
+
+    /*
+       dp[分數] =
+       達到這個分數所需的最少物品數
+    */
+
+    const INF = 999999999;
+
+    const dp =
+        new Int32Array(target + 1);
+
+    dp.fill(INF);
+
+    dp[0] = 0;
+
+
+    /*
+       逐一加入每一種物品。
+
+       因為有庫存限制，
+       每一種物品最多只能加入 maxUnits 次。
+    */
+
+    for (
+        let i = 0;
+        i < items.length;
+        i++
+    ) {
+
+        const item = items[i];
+
+        const max =
+            maxUnits[i];
+
+
+        /*
+           用複製的方式處理庫存限制。
+        */
+
+        const newDp =
+            new Int32Array(dp);
+
+        for (
+            let score = 0;
+            score <= target;
+            score++
+        ) {
+
+            if (dp[score] === INF) {
+                continue;
+            }
+
+
+            for (
+                let count = 1;
+                count <= max;
+                count++
+            ) {
+
+                const newScore =
+                    score +
+                    item.score * count;
+
+
+                if (newScore > target) {
+                    break;
+                }
+
+
+                /*
+                   實際使用幾個物品。
+
+                   unit = 10
+                   count = 2
+
+                   就是使用 20 個。
+                */
+
+                const cost =
+                    dp[score] +
+                    item.unit * count;
+
+
+                if (
+                    cost <
+                    newDp[newScore]
+                ) {
+
+                    newDp[newScore] =
+                        cost;
+
+                }
+
+            }
+
+        }
+
+        /*
+           把新的結果存回去
+        */
+
+        for (
+            let score = 0;
+            score <= target;
+            score++
+        ) {
+
+            dp[score] = newDp[score];
+
+        }
+
+    }
+
+
+    if (dp[target] === INF) {
+
+        return null;
+
+    }
+
+
+    return {
+        cost: dp[target]
+    };
+
+}
+
+
+/* =========================================================
+   尋找多個解
+
+   會從「最少使用數量」開始找，
+   再逐步放寬。
+
+   因此不會只顯示完全相同物品數量的解。
+   ========================================================= */
+
+function findSolutions(
+    items,
+    maxUnits,
+    target,
+    bestCost,
+    wanted
+) {
+
+    const solutions = [];
+
+    /*
+       搜尋範圍。
+
+       最多比最佳解多 30 個物品。
+
+       例如最佳解使用 10 個，
+       就會尋找：
+
+       10
+       11
+       12
+       ...
+       40
+
+       找到 3 個就停止。
+    */
+
+    const maxExtraCost = 30;
+
+
+    for (
+        let maxCost = bestCost;
+        maxCost <= bestCost + maxExtraCost;
+        maxCost++
+    ) {
+
+        if (solutions.length >= wanted) {
+            break;
+        }
+
+
+        /*
+           DFS 搜尋符合條件的組合
+        */
+
+        searchSolutions(
+            items,
+            maxUnits,
+            target,
+            maxCost,
+            0,
+            0,
+            [],
+            solutions,
+            wanted
+        );
+
+    }
+
+
+    return solutions;
+
+}
+
+
+/* =========================================================
+   DFS 搜尋解
+   ========================================================= */
+
+function searchSolutions(
+    items,
+    maxUnits,
+    target,
+    maxCost,
+    index,
+    currentScore,
+    counts,
+    solutions,
+    wanted
+) {
+
+    if (solutions.length >= wanted) {
+        return;
+    }
+
+
+    /*
+       所有物品都處理完
+    */
+
+    if (index === items.length) {
+
+        if (
+            currentScore === target &&
+            getActualCost(items, counts) <= maxCost
+        ) {
+
+            /*
+               避免完全相同的解重複出現
+            */
+
+            const key =
+                counts.join(",");
+
+
+            const exists =
+                solutions.some(
+                    s => s.key === key
+                );
+
+
+            if (!exists) {
+
+                solutions.push({
+
+                    key: key,
+
+                    counts:
+                        [...counts],
+
+                    cost:
+                        getActualCost(
+                            items,
+                            counts
+                        )
+
+                });
+
+            }
+
+        }
+
+        return;
+
+    }
+
+
+    const item =
+        items[index];
+
+
+    const remaining =
+        target - currentScore;
+
+
+    /*
+       如果已經超過目標，
+       不需要繼續。
+    */
+
+    if (remaining < 0) {
+        return;
+    }
+
+
+    /*
+       最多可以使用幾個單位。
+
+       同時受到：
+       1. 庫存
+       2. 剩餘分數
+       3. 最大物品數
+       三者限制。
+    */
+
+    const maxByScore =
+        Math.floor(
+            remaining /
+            item.score
+        );
+
+
+    const maxCount =
+        Math.min(
+            maxUnits[index],
+            maxByScore
+        );
+
+
+    /*
+       先嘗試使用比較多的高分物品。
+
+       通常可以比較快找到
+       使用數量少的解。
+    */
+
+    for (
+        let count = maxCount;
+        count >= 0;
+        count--
+    ) {
+
+        const newScore =
+            currentScore +
+            item.score * count;
+
+
+        const newCost =
+            getActualCost(
+                items,
+                counts
+            ) +
+            item.unit * count;
+
+
+        /*
+           超過目前搜尋上限，
+           就不用繼續。
+        */
+
+        if (newCost > maxCost) {
+            continue;
+        }
+
+
+        counts[index] =
+            count;
+
+
+        searchSolutions(
+            items,
+            maxUnits,
+            target,
+            maxCost,
+            index + 1,
+            newScore,
+            counts,
+            solutions,
+            wanted
+        );
+
+
+        counts[index] = 0;
+
+
+        if (solutions.length >= wanted) {
+            return;
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   計算實際使用的物品數量
+   ========================================================= */
+
+function getActualCost(
+    items,
+    counts
+) {
+
+    let total = 0;
+
+
+    for (
+        let i = 0;
+        i < items.length;
+        i++
+    ) {
+
+        total +=
+            counts[i] *
+            items[i].unit;
+
+    }
+
+
+    return total;
+
+}
+
+
+/* =========================================================
+   備用搜尋
+
+   如果目標非常大，
+   使用簡單 DFS。
+   ========================================================= */
+
+function findBestBySearch(
+    items,
+    maxUnits,
+    target
+) {
+
+    let bestCost =
+        Infinity;
+
+
+    function search(
+        index,
+        score,
+        cost
+    ) {
+
+        if (score > target) {
+            return;
+        }
+
+
+        if (cost >= bestCost) {
+            return;
+        }
+
+
+        if (index === items.length) {
+
+            if (score === target) {
+
+                bestCost = cost;
+
+            }
+
+            return;
+
+        }
+
+
+        const item =
+            items[index];
+
+
+        const maxByScore =
+            Math.floor(
+                (target - score) /
+                item.score
+            );
+
+
+        const maxCount =
+            Math.min(
+                maxUnits[index],
+                maxByScore
+            );
+
+
+        for (
+            let count = maxCount;
+            count >= 0;
+            count--
+        ) {
+
+            search(
+                index + 1,
+                score +
+                    item.score * count,
+                cost +
+                    item.unit * count
+            );
+
+        }
+
+    }
+
+
+    search(0, 0, 0);
+
+
+    if (bestCost === Infinity) {
+        return null;
+    }
+
+
+    return {
+        cost: bestCost
+    };
+
+}
+
+
+/* =========================================================
+   顯示結果
+   ========================================================= */
+
+function displaySolutions(
+    solutions,
+    items,
+    need,
+    currentScore
+) {
+
+    const result =
+        document.getElementById("result");
+
+
+    if (solutions.length === 0) {
+
+        result.innerHTML = `
+            <div class="error">
+                找不到符合條件的解。
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    let html = `
+
+        <div class="section-title">
+            計算結果
+        </div>
+
+        <div class="hint">
+            需要增加：
+            <strong>
+                ${need.toLocaleString()}
+            </strong>
+            分
+        </div>
+
+    `;
+
+
+    /*
+       依照使用物品數量排序
+    */
+
+    solutions.sort(
+        (a, b) =>
+            a.cost - b.cost
+    );
+
+
+    solutions.forEach(
+        (solution, index) => {
+
+            html += `
+
+                <div class="solution">
+
+                    <div class="solution-title">
+
+                        方案 ${index + 1}
+
+                        ／共使用
+                        ${solution.cost}
+                        個物品
+
+                    </div>
+
+            `;
+
+
+            solution.counts.forEach(
+                (count, itemIndex) => {
+
+                    if (count <= 0) {
+                        return;
+                    }
+
+
+                    const item =
+                        items[itemIndex];
+
+
+                    const actualCount =
+                        count *
+                        item.unit;
+
+
+                    const addedScore =
+                        count *
+                        item.score;
+
+
+                    html += `
+
+                        <div class="solution-item">
+
+                            ${item.name}
+                            ×
+                            ${actualCount}
+
+                            ｜
+                            +${addedScore.toLocaleString()}
+                            分
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+
+            html += `
+
+                    <div class="solution-summary">
+
+                        總增加：
+                        ${need.toLocaleString()}
+                        分
+
+                        <br>
+
+                        最終分數：
+                        ${(
+                            currentScore +
+                            need
+                        ).toLocaleString()}
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    result.innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   網頁第一次開啟時
+   預設顯示 D1
+   ========================================================= */
+
+renderInventory();
+
+</script>
+
+</body>
+</html>
