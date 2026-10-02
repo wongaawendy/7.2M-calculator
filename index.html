@@ -71,6 +71,24 @@
             margin-bottom: 25px;
         }
 
+        .notice {
+            margin-bottom: 25px;
+            padding: 12px 15px;
+            background: #fff8e1;
+            border: 1px solid #f0d98c;
+            border-radius: 8px;
+        }
+
+        .notice-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .notice-text {
+            font-size: 14px;
+            color: #666;
+        }
+
         .section-title {
             font-size: 18px;
             font-weight: bold;
@@ -223,17 +241,29 @@
          ========================= -->
 
     <div class="tabs">
-        <button class="tab-button active" onclick="switchTab('D1')">D1</button>
-        <button class="tab-button" onclick="switchTab('D2')">D2</button>
-        <button class="tab-button" onclick="switchTab('D3')">D3</button>
-        <button class="tab-button" onclick="switchTab('D4')">D4</button>
-        <button class="tab-button" onclick="switchTab('D5')">D5</button>
+        <button class="tab-button active" onclick="switchTab('D1')">D1 雷達</button>
+        <button class="tab-button" onclick="switchTab('D2')">D2 建築</button>
+        <button class="tab-button" onclick="switchTab('D3')">D3 科技</button>
+        <button class="tab-button" onclick="switchTab('D4')">D4 英雄</button>
+        <button class="tab-button" onclick="switchTab('D5')">D5 練兵</button>
     </div>
 
 
     <!-- =========================
          分數
          ========================= -->
+
+    <div class="notice">
+       <div class="notice-title">
+        ⚠️ 注意事項
+       </div>
+
+       <div class="notice-text">
+        建議完成一個項目後，把目前分數輸入回來重新檢查。<br>
+        D3科技及D5練兵日很容易獲取分數，可以在開始前把雷達先點開。
+       </div>
+    </div>
+
 
     <div class="section">
 
@@ -281,7 +311,7 @@
     <div class="section">
 
         <div class="section-title">
-            <span id="inventoryTitle">D1</span> 庫存
+            道具庫存
         </div>
 
         <div
@@ -366,7 +396,7 @@ const formulas = {
                 name: "Lv1晶片箱子",
                 score: 2813,
                 unit: 1,
-                note: ""
+                note: "一次只能點一個!!!!"
             },
 
             {
@@ -425,7 +455,7 @@ const formulas = {
             },
 
             {
-                name: "招募",
+                name: "倖存者招募",
                 score: 4500,
                 unit: 1,
                 note: ""
@@ -518,7 +548,7 @@ const formulas = {
                 name: "榮譽勳章",
                 score: 750,
                 unit: 1,
-                note: ""
+                note: "用於計算消耗量，但不建議使用"
             }
 
         ]
@@ -544,6 +574,13 @@ const formulas = {
             {
                 name: "SSR英雄碎片",
                 score: 8750,
+                unit: 10,
+                note: ""
+            },
+
+            {
+                name: "SR英雄碎片",
+                score: 2500,
                 unit: 10,
                 note: ""
             },
@@ -755,10 +792,6 @@ function renderInventory() {
     const formula = formulas[currentTab];
 
     const grid = document.getElementById("inventoryGrid");
-
-    const title = document.getElementById("inventoryTitle");
-
-    title.textContent = currentTab;
 
     grid.innerHTML = "";
 
