@@ -758,7 +758,7 @@ function switchTab(tabName) {
 
     buttons.forEach(button => {
 
-        if (button.textContent === tabName) {
+        if (button.textContent.startsWith(tabName)) {
 
             button.classList.add("active");
 
@@ -820,7 +820,7 @@ function renderInventory() {
 
         if (item.note) {
 
-            ruleText += `｜${item.note}`;
+            ruleText += `｜<strong>${item.note}</strong>`;
 
         }
 
@@ -1006,7 +1006,7 @@ function calculate() {
             maxUnits,
             need,
             best.cost,
-            3
+            5
         );
 
 
