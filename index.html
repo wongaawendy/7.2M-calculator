@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>7.2M計算機</title>
+    <title>🎯7.2M計算器</title>
 
     <style>
         * {
@@ -216,7 +216,7 @@
 
 <div class="container">
 
-    <h1>7.2M計算機</h1>
+    <h1>🎯 7.2M計算器</h1>
 
     <!-- =========================
          D1～D5 Tab
@@ -1079,7 +1079,7 @@ function findBestSolution(
 
                 const newScore =
                     score +
-                    item.score * count;
+                    item.score * item.unit * count;
 
 
                 if (newScore > target) {
@@ -1323,7 +1323,7 @@ function searchSolutions(
     const maxByScore =
         Math.floor(
             remaining /
-            item.score
+            (item.score * item.unit)
         );
 
 
@@ -1349,7 +1349,7 @@ function searchSolutions(
 
         const newScore =
             currentScore +
-            item.score * count;
+            item.score * item.unit * count;
 
 
         const newCost =
@@ -1482,7 +1482,7 @@ function findBestBySearch(
         const maxByScore =
             Math.floor(
                 (target - score) /
-                item.score
+                (item.score * item.unit)
             );
 
 
@@ -1502,7 +1502,7 @@ function findBestBySearch(
             search(
                 index + 1,
                 score +
-                    item.score * count,
+                    item.score * item.unit * count,
                 cost +
                     item.unit * count
             );
@@ -1621,7 +1621,7 @@ function displaySolutions(
 
                     const addedScore =
                         count *
-                        item.score;
+                        item.score * item.unit;
 
 
                     html += `
