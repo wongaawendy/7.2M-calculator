@@ -931,9 +931,40 @@ function calculate() {
         }
     );
 
+    // D5 使用專用的快速搜尋
+    if (currentTab === "D5") {
+
+        const solutions = findFastD5Solutions(
+            formula.items,
+            maxUnits,
+            need,
+            3
+        );
+
+        if (solutions.length === 0) {
+
+            result.innerHTML = `
+                <div class="error">
+                    找不到符合庫存限制、且剛好達標的組合。
+                </div>
+            `;
+
+        } else {
+
+            displaySolutions(
+                solutions,
+                formula.items,
+                need,
+                currentScore
+            );
+
+        }
+
+        return;
+    }
 
     /*
-       先找最少使用數量的解
+       找最少使用數量的解
     */
 
     const best =
@@ -993,6 +1024,219 @@ function calculate() {
 
    cost = 實際使用的物品數量
    ========================================================= */
+
+/* =========================================================
+   D5 專用快速搜尋
+   目標：精確達標，最多找 3 組解
+   不保證物品數量最少
+   ========================================================= */
+
+function findFastD5Solutions(
+    items,
+    maxUnits,
+    target,
+    wanted = 3
+) {
+
+    // 計算所有道具分數的最大公因數
+    function gcd(a, b) {
+        while (b !== 0) {
+            const r = a % b;
+            a = b;
+            b = r;
+        }
+        return a;
+    }
+
+    let scale = 0;
+
+    for (const item of items) {
+        scale = gcd(
+            scale,
+            item.score * item.unit
+        );
+    }
+
+    // 目標分數必須能被公因數整除
+    if (target % scale !== 0) {
+        return [];
+    }
+
+    const targetUnits = target / scale;
+
+    // 每個道具在縮小後的分數
+    const values = items.map(
+        item => item.score * item.unit / scale
+    );
+
+    // 嘗試不同道具順序，找出不同的答案
+    const orders = [
+        items.map((_, i) => i),
+        items.map((_, i) => items.length - 1 - i),
+        items.map((_, i) => i).sort(
+            (a, b) => values[a] - values[b]
+        ),
+        items.map((_, i) => i).sort(
+            (a, b) => values[b] - values[a]
+        )
+    ];
+
+    // 再加入兩種輪替順序
+    for (let shift = 1; shift <= 2; shift++) {
+        orders.push(
+            items.map(
+                (_, i) => (i + shift) % items.length
+            )
+        );
+    }
+
+    const solutions = [];
+    const seen = new Set();
+
+    for (
+        let attempt = 0;
+        attempt < orders.length &&
+        solutions.length < wanted;
+        attempt++
+    ) {
+
+        const order = orders[attempt];
+
+        // reachable 表示某個分數能否由目前道具組成
+        let reachable = new Uint8Array(
+            targetUnits + 1
+        );
+
+        reachable[0] = 1;
+
+        const layers = [reachable];
+        const choices = [];
+
+        for (const index of order) {
+
+            const value = values[index];
+            const maxCount = Math.min(
+                maxUnits[index],
+                Math.floor(targetUnits / value)
+            );
+
+            const next = new Uint8Array(
+                targetUnits + 1
+            );
+
+            const choice = new Int32Array(
+                targetUnits + 1
+            );
+
+            choice.fill(-1);
+
+            const queue = new Int32Array(
+                Math.floor(targetUnits / value) + 2
+            );
+
+            // 依照分數餘數分組，使用滑動視窗
+            for (
+                let residue = 0;
+                residue < value &&
+                residue <= targetUnits;
+                residue++
+            ) {
+
+                let head = 0;
+                let tail = 0;
+                let k = 0;
+
+                for (
+                    let sum = residue;
+                    sum <= targetUnits;
+                    sum += value, k++
+                ) {
+
+                    if (reachable[sum]) {
+                        queue[tail++] = k;
+                    }
+
+                    while (
+                        head < tail &&
+                        queue[head] < k - maxCount
+                    ) {
+                        head++;
+                    }
+
+                    if (head < tail) {
+
+                        // 偶數次嘗試優先選較新的前置狀態
+                        const previousK =
+                            attempt % 2 === 0
+                                ? queue[tail - 1]
+                                : queue[head];
+
+                        next[sum] = 1;
+                        choice[sum] = k - previousK;
+
+                    }
+
+                }
+            }
+
+            reachable = next;
+            layers.push(reachable);
+            choices.push(choice);
+
+        }
+
+        // 目標分數無法組成，就換下一種順序
+        if (!reachable[targetUnits]) {
+            continue;
+        }
+
+        // 從目標往回還原使用數量
+        let remaining = targetUnits;
+        const counts = new Array(items.length).fill(0);
+
+        for (
+            let i = order.length - 1;
+            i >= 0;
+            i--
+        ) {
+
+            const count = choices[i][remaining];
+            const originalIndex = order[i];
+
+            if (count < 0) {
+                remaining = -1;
+                break;
+            }
+
+            counts[originalIndex] = count;
+
+            remaining -=
+                count * values[originalIndex];
+
+        }
+
+        if (remaining !== 0) {
+            continue;
+        }
+
+        // 避免同一組答案重複顯示
+        const key = counts.join(",");
+
+        if (seen.has(key)) {
+            continue;
+        }
+
+        seen.add(key);
+
+        solutions.push({
+            counts: counts,
+            cost: getActualCost(items, counts)
+        });
+
+    }
+
+    return solutions;
+}
 
 function findBestSolution(
     items,
